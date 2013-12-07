@@ -155,17 +155,17 @@ static inline BOOL MKMapLineIntersectsLineSegment(MKMapLine line, MKMapLine line
         return (left <= x) && (x <= right) && (bottom <= y) && (y <= top);
     }
 
-
-
     return det != 0;
 }
 
-static inline BOOL MKMapLineIntersectsRect(MKMapLine line, MKMapRect rect)
-{
+static inline BOOL MKMapLineIntersectsRect(MKMapLine line, MKMapRect rect) {
     BOOL intersects = MKMapRectContainsPoint(rect, line.point1) || MKMapRectContainsPoint(rect, line.point2);
     if (intersects) return YES;
 
-    MKMapLine CGRectMinYLine = MKMapLineMake(MKMapPointMake(rect.origin.x, rect.origin.y), MKMapPointMake(rect.origin.x + rect.size.width, rect.origin.y));
+    MKMapLine CGRectMinYLine = MKMapLineMake(
+        MKMapPointMake(MKMapRectGetMinX(rect), MKMapRectGetMinY(rect)),
+        MKMapPointMake(MKMapRectGetMaxX(rect), MKMapRectGetMinY(rect))
+    );
 
     intersects = MKMapLineIntersectsLineSegment(line, CGRectMinYLine, NULL);
     if (intersects) return YES;

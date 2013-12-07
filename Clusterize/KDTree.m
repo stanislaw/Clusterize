@@ -56,6 +56,9 @@
     return result;
 }
 
+static int totalHH = 0;
+static int totalDuplicatesCentroids = 0;
+
 - (NSArray *)annotationsInMapRect:(MKMapRect)rect withRespectToCentroids:(NSMutableArray *)centroids {
 
     NSMutableArray *result = [NSMutableArray array];
@@ -74,8 +77,11 @@
         [centroid calculateLocationBasedOnAccumulatedData];
     }];
 
+    LSLog(@"total mass-centroids nodes passed, total duplicates centroids: (%d; %d)", totalHH, totalDuplicatesCentroids);
+    
     return result;
 }
+
 
 - (void)doSearchInMapRect:(MKMapRect)mapRect
        mutableAnnotations:(NSMutableArray *)annotations
@@ -130,6 +136,8 @@
             if (currentNodeAlreadyContainsCentroid) {
                 *stop = YES;
                 candidateCentroidIndex = NSNotFound;
+                totalDuplicatesCentroids++;
+
                 return;
             } else {
                 minimalDistanceBeetweenNodeAndCentroid = 0;
@@ -177,6 +185,8 @@
                 candidateCentroid.totalCoordinate.latitude + curNode.totalCoordinate.latitude,
                 candidateCentroid.totalCoordinate.longitude + curNode.totalCoordinate.longitude
             );
+
+            totalHH++;
 
             return;
         }

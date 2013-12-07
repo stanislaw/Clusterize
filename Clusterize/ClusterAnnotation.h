@@ -10,5 +10,9 @@
 #import <MapKit/MKAnnotation.h>
 
 @interface ClusterAnnotation : NSObject <MKAnnotation>
+
 @property (nonatomic) CLLocationCoordinate2D coordinate;
+
+@property (copy, nonatomic) NSString *title;
+
 @end

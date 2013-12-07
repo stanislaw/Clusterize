@@ -62,6 +62,7 @@
         if (annotationView == nil) {
             annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:clusterAnnotationIdentifier];
             annotationView.pinColor = MKPinAnnotationColorPurple;
+            annotationView.canShowCallout = YES;
         } else {
             annotationView.annotation = annotation;
         }
@@ -109,10 +110,10 @@
         delta += centroid.locationDelta;
     }];
 
-    LS(delta );
+    //LS(delta);
 
-    if (delta < 600.0 || iteration == 50) {
-        NSLog(@"Displaying clusters on iteration and delta: %u %f", iteration, delta);
+    if (delta < 600.0 || iteration == 12) {
+        NSLog(@"Displaying clusters on iteration and delta and centroids number: (%u; %f; %u)", iteration, delta, centroids.count);
 
         [self.mapView removeAnnotations:self.mapView.annotations];
 
@@ -131,7 +132,8 @@
             else {
                 ClusterAnnotation *clusterAnnotation = [[ClusterAnnotation alloc] init];
                 clusterAnnotation.coordinate = [centroid location].coordinate;
-
+                clusterAnnotation.title = [[NSNumber numberWithUnsignedInteger:centroid.numberOfAnnotations] stringValue];
+                
                 [self.mapView addAnnotation:clusterAnnotation];
             }
         }
