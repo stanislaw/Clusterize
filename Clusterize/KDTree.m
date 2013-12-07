@@ -52,6 +52,74 @@
     return result;
 }
 
+- (NSArray *)annotationsInMapRect:(MKMapRect)rect withRespectToCentroids:(NSMutableArray *)centroids {
+
+    NSMutableArray *result = [NSMutableArray array];
+
+    [self doSearchInMapRect:rect
+         mutableAnnotations:result
+                    curNode:self.root
+                   curLevel:0
+     withRespectToCentroids:centroids];
+
+    return result;
+}
+
+- (void)doSearchInMapRect:(MKMapRect)mapRect
+       mutableAnnotations:(NSMutableArray *)annotations
+                  curNode:(KDTreeNode *)curNode
+                 curLevel:(NSInteger)level
+   withRespectToCentroids:(NSMutableArray *)centroids {
+
+    if (curNode == nil) {
+        abort();
+    }
+
+    if (curNode.annotation) {
+        if (MKMapRectContainsPoint(mapRect, MKMapPointForCoordinate(curNode.annotation.coordinate))) {
+            [annotations addObject:curNode.annotation];
+        }
+
+        return;
+    }
+
+    MKMapPoint mapPoint = curNode.medianMapPoint;
+
+    BOOL useY = (BOOL)(level % 2);
+
+    float val = (useY ? mapPoint.y : mapPoint.x);
+    float minVal = (useY ? MKMapRectGetMinY(mapRect) : MKMapRectGetMinX(mapRect));
+    float maxVal = (useY ? MKMapRectGetMaxY(mapRect) : MKMapRectGetMaxX(mapRect));
+
+    if (maxVal < val) {
+        [self doSearchInMapRect:mapRect
+             mutableAnnotations:annotations
+                        curNode:curNode.left
+                       curLevel:(level + 1)];
+    }
+
+    else if (minVal > val){
+        [self doSearchInMapRect:mapRect
+             mutableAnnotations:annotations
+                        curNode:curNode.right
+                       curLevel:(level + 1)];
+    }
+
+    else {
+
+        [self doSearchInMapRect:mapRect
+             mutableAnnotations:annotations
+                        curNode:curNode.left
+                       curLevel:(level + 1)];
+
+        [self doSearchInMapRect:mapRect
+             mutableAnnotations:annotations
+                        curNode:curNode.right
+                       curLevel:(level + 1)];
+    }
+    
+}
+
 
 - (void)doSearchInMapRect:(MKMapRect)mapRect
        mutableAnnotations:(NSMutableArray *)annotations
@@ -110,8 +178,6 @@
 - (KDTreeNode *)buildTree:(NSArray *)annotations level:(NSInteger)curLevel mapRect:(MKMapRect)mapRect {
     NSInteger count = [annotations count];
 
-    LS(mapRect);
-    
     if (count == 0) {
         return nil;
     }
@@ -121,7 +187,6 @@
 
     if (count == 1) {
         treeNode.annotation = [annotations firstObject];
-        treeNode.numberOfAnnotations = 1;
 
         return treeNode;
     }
@@ -130,55 +195,37 @@
 
     NSArray *sortedAnnotations = [self sortedAnnotations:annotations sortY:sortY];
 
-    // Map rect
     MKMapRect treeNodeRect = mapRect;
 
-    MKMapPoint minimalLocationPoint = MKMapPointForCoordinate([[sortedAnnotations firstObject] coordinate]);
-    MKMapPoint maximalLocationPoint = MKMapPointForCoordinate([[sortedAnnotations lastObject] coordinate]);
-
-    if (sortY) {
-        if (minimalLocationPoint.y > MKMapRectGetMinY(treeNodeRect)) {
-            treeNodeRect.origin.y = minimalLocationPoint.y;
-            treeNodeRect.size.height = minimalLocationPoint.y + maximalLocationPoint.y + 0.1;
-        }
-    } else {
-        if (minimalLocationPoint.x > MKMapRectGetMinX(treeNodeRect)) {
-            treeNodeRect.origin.x = minimalLocationPoint.x;
-            treeNodeRect.size.width = minimalLocationPoint.x + maximalLocationPoint.x + 0.1;
-        }
+    if (curLevel == 0) {
+        treeNodeRect = [self mapRectThatFitsAnnotations:sortedAnnotations];
     }
 
     treeNode.mapRect = treeNodeRect;
 
+    if (MKMapRectContainsRect(mapRect, treeNode.mapRect) == NO) {
+        abort();
+    }
+    
     // Median map point
     NSInteger medianIdx = [sortedAnnotations count] / 2;
     CLLocation *medianAnnotation = [sortedAnnotations objectAtIndex:medianIdx];
     treeNode.medianMapPoint = MKMapPointForCoordinate(medianAnnotation.coordinate);
 
-    // Leaves
-    double amount;
-    CGRectEdge edgeToDelimit;
+    NSArray *leftAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(0, medianIdx)];
+    NSArray *rightAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(medianIdx, count - medianIdx)];
+    NSAssert([leftAnnotations containsObject:medianAnnotation] == NO, nil);
+    NSAssert([rightAnnotations containsObject:medianAnnotation], nil);
 
-    if (sortY) {
-        edgeToDelimit = CGRectMinYEdge;
-        amount = treeNode.medianMapPoint.y - treeNode.mapRect.origin.y;
-    } else {
-        edgeToDelimit = CGRectMinXEdge;
-        amount = treeNode.medianMapPoint.x - treeNode.mapRect.origin.x;
-    }
+    MKMapRect leftLeaveMapRect = [self mapRectThatFitsAnnotations:leftAnnotations];
+    MKMapRect rightLeaveMapRect = [self mapRectThatFitsAnnotations:rightAnnotations];
 
-    MKMapRect leftLeaveMapRect;
-    MKMapRect rightLeaveMapRect;
+    NSAssert(MKMapRectContainsRect(mapRect, leftLeaveMapRect), nil);
+    NSAssert(MKMapRectContainsRect(mapRect, rightLeaveMapRect), nil);
 
-    MKMapRectDivide(treeNode.mapRect, &leftLeaveMapRect, &rightLeaveMapRect, amount, edgeToDelimit);
+    treeNode.left = [self buildTree:leftAnnotations level:(curLevel + 1) mapRect:leftLeaveMapRect];
+    treeNode.right = [self buildTree:rightAnnotations level:(curLevel + 1) mapRect:rightLeaveMapRect];
 
-    treeNode.left = [self buildTree:[sortedAnnotations subarrayWithRange:NSMakeRange(0, medianIdx)]
-                       level:(curLevel + 1) mapRect:mapRect];
-
-
-    treeNode.right = [self buildTree:[sortedAnnotations subarrayWithRange:NSMakeRange(medianIdx, count - medianIdx)] level:(curLevel + 1) mapRect:mapRect];
-
-    // Total-coordinate
     __block CLLocationCoordinate2D totalCoordinate = CLLocationCoordinate2DMake(0, 0);
 
     [sortedAnnotations enumerateObjectsUsingBlock:^(CLLocation *annotation, NSUInteger idx, BOOL *stop) {
@@ -189,6 +236,18 @@
     treeNode.totalCoordinate = totalCoordinate;
 
     return treeNode;
+}
+
+- (MKMapRect)mapRectThatFitsAnnotations:(NSArray *)annotations {
+    MKMapRect fitRect = MKMapRectNull;
+
+    for (id <MKAnnotation> annotation in annotations) {
+        MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
+        MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y, 0.1, 0.1);
+
+        fitRect = MKMapRectUnion(fitRect, pointRect);
+    }
+    return fitRect;
 }
 
 - (NSArray *)sortedAnnotations:(NSArray *)annotations sortY:(BOOL)sortY {

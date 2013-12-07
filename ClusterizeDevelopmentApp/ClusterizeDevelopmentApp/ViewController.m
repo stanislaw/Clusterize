@@ -115,7 +115,7 @@
         }
     }
 
-    NSArray *visibleAnnotations = [self.kdTree annotationsInMapRect:self.mapView.visibleMapRect];
+    NSArray *visibleAnnotations = [self.kdTree annotationsInMapRect:self.mapView.visibleMapRect withRespectToCentroids:centroids];
 
     [visibleAnnotations enumerateObjectsUsingBlock:^(CLLocation *coordinate, NSUInteger idx, BOOL *stop) {
         __block CLLocationDistance minimalDistance = NSUIntegerMax;
