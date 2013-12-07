@@ -202,12 +202,12 @@ static int totalDuplicatesCentroids = 0;
             candidateCentroid.numberOfAnnotations += curNode.numberOfAnnotations;
 
             candidateCentroid.sumOfMapPoints = MKMapPointMake(
-                candidateCentroid.sumOfMapPoints.x + curNode.sumOfMapPoints.x,
-                candidateCentroid.sumOfMapPoints.y + curNode.sumOfMapPoints.y
-            );
-
+                                                              candidateCentroid.sumOfMapPoints.x + curNode.sumOfMapPoints.x,
+                                                              candidateCentroid.sumOfMapPoints.y + curNode.sumOfMapPoints.y
+                                                              );
+            
             totalHH++;
-
+            
             return;
         }
     }
