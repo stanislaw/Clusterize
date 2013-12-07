@@ -15,20 +15,23 @@
 
     if (self == nil) return nil;
 
-    self.totalCoordinate = CLLocationCoordinate2DMake(0, 0);
-
+    [self invalidateAccumulatedData];
+    
     return self;
 }
 
 - (void)calculateLocationBasedOnAccumulatedData {
     if (self.numberOfAnnotations > 0) {
-        self.location = [[CLLocation alloc] initWithLatitude:(self.totalCoordinate.latitude / self.numberOfAnnotations) longitude:(self.totalCoordinate.longitude / self.numberOfAnnotations)];
+        self.mapPoint = MKMapPointMake(self.sumOfMapPoints.x / self.numberOfAnnotations, self.sumOfMapPoints.y / self.numberOfAnnotations);
+        CLLocationCoordinate2D coordinate = MKCoordinateForMapPoint(self.mapPoint);
+
+        self.location = [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
     }
 }
 
 - (void)invalidateAccumulatedData {
     self.numberOfAnnotations = 0;
-    self.totalCoordinate = CLLocationCoordinate2DMake(0, 0);
+    self.sumOfMapPoints = MKMapPointMake(0, 0);
 }
 
 - (void)setLocation:(CLLocation *)location {
@@ -37,10 +40,6 @@
     }
     
     _location = [location copy];
-}
-
-- (MKMapPoint)mapPoint {
-    return MKMapPointForCoordinate(self.location.coordinate);
 }
 
 @end

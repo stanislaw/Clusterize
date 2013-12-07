@@ -29,7 +29,7 @@
 @property (nonatomic) MKMapRect mapRect;
 
 @property (nonatomic) NSUInteger numberOfAnnotations;
-@property (nonatomic) CLLocationCoordinate2D totalCoordinate;
+@property (nonatomic) MKMapPoint sumOfMapPoints;
 
 
 @end

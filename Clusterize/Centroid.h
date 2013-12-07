@@ -11,8 +11,9 @@
 
 @interface Centroid : NSObject
 
-@property (strong, nonatomic) CLLocation *location;
-@property (nonatomic, readonly) MKMapPoint mapPoint;
+@property (readonly, nonatomic) CLLocation *location;
+@property (nonatomic) MKMapPoint mapPoint;
+
 
 - (void)calculateLocationBasedOnAccumulatedData;
 - (void)invalidateAccumulatedData;
@@ -20,6 +21,6 @@
 @property (nonatomic) CLLocationDistance locationDelta;
 
 @property (nonatomic) NSUInteger numberOfAnnotations;
-@property (nonatomic) CLLocationCoordinate2D totalCoordinate;
+@property (nonatomic) MKMapPoint sumOfMapPoints;
 
 @end

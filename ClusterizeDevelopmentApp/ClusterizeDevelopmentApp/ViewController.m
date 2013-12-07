@@ -26,7 +26,7 @@
     
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 1000; i++) {
         CLLocation *randomCoordinate = [self randomLocation];
 
         [self.annotations addObject:randomCoordinate];
@@ -93,11 +93,9 @@
 
         for(int x = mapRect.origin.x; x < mapRect.origin.x + mapRect.size.width; x += widthInterval) {
             for(int y = mapRect.origin.y; y < mapRect.origin.y + mapRect.size.height; y += heightInterval) {
-                CLLocationCoordinate2D centerCoordinate = MKCoordinateForMapPoint(MKMapPointMake(x, y));
-                CLLocation *centerLocation = [[CLLocation alloc] initWithLatitude:centerCoordinate.latitude longitude:centerCoordinate.longitude];
-
                 Centroid *centroid = [[Centroid alloc] init];
-                centroid.location = centerLocation;
+                centroid.mapPoint = MKMapPointMake(x, y);
+                centroid.numberOfAnnotations = 0;
 
                 [centroids addObject:centroid];
             }
@@ -110,9 +108,11 @@
         delta += centroid.locationDelta;
     }];
 
-    //LS(delta);
+    if (iteration == 0) {
+        delta = NSUIntegerMax;
+    }
 
-    if (delta < 600.0 || iteration == 12) {
+    if (delta < 600.0 || iteration == 4) {
         NSLog(@"Displaying clusters on iteration and delta and centroids number: (%u; %f; %u)", iteration, delta, centroids.count);
 
         [self.mapView removeAnnotations:self.mapView.annotations];
