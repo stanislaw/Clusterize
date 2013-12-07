@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45F982959993478AB8222D85 /* libPods-ClusterizeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB766E6DFC04401C8A28E069 /* libPods-ClusterizeTests.a */; };
 		8680E51F1852D71700B2D841 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E51E1852D71700B2D841 /* Foundation.framework */; };
 		8680E5211852D71700B2D841 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E5201852D71700B2D841 /* CoreGraphics.framework */; };
 		8680E5231852D71700B2D841 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E5221852D71700B2D841 /* UIKit.framework */; };
@@ -17,22 +18,22 @@
 		8680E5351852D71700B2D841 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8680E5331852D71700B2D841 /* Main_iPad.storyboard */; };
 		8680E5381852D71700B2D841 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E5371852D71700B2D841 /* ViewController.m */; };
 		8680E53A1852D71700B2D841 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8680E5391852D71700B2D841 /* Images.xcassets */; };
-		8680E5411852D71700B2D841 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E5401852D71700B2D841 /* XCTest.framework */; };
-		8680E5421852D71700B2D841 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E51E1852D71700B2D841 /* Foundation.framework */; };
-		8680E5431852D71700B2D841 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E5221852D71700B2D841 /* UIKit.framework */; };
-		8680E54B1852D71700B2D841 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8680E5491852D71700B2D841 /* InfoPlist.strings */; };
-		8680E54D1852D71700B2D841 /* ClusterizeDevelopmentAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E54C1852D71700B2D841 /* ClusterizeDevelopmentAppTests.m */; };
 		8680E5621852D74800B2D841 /* Centroid.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E5581852D74800B2D841 /* Centroid.m */; };
 		8680E5631852D74800B2D841 /* ClusterAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E55A1852D74800B2D841 /* ClusterAnnotation.m */; };
 		8680E5641852D74800B2D841 /* KDTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E55D1852D74800B2D841 /* KDTree.m */; };
 		8680E5651852D74800B2D841 /* KDTreeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E55F1852D74800B2D841 /* KDTreeNode.m */; };
 		8680E5661852D74800B2D841 /* SingleAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E5611852D74800B2D841 /* SingleAnnotation.m */; };
 		8680E5681852D88500B2D841 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E5671852D88500B2D841 /* MapKit.framework */; };
+		8680E571185318B200B2D841 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E570185318B200B2D841 /* SenTestingKit.framework */; };
+		8680E572185318B200B2D841 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E51E1852D71700B2D841 /* Foundation.framework */; };
+		8680E573185318B200B2D841 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8680E5221852D71700B2D841 /* UIKit.framework */; };
+		8680E579185318B200B2D841 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8680E577185318B200B2D841 /* InfoPlist.strings */; };
+		8680E57B185318B200B2D841 /* ClusterizeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8680E57A185318B200B2D841 /* ClusterizeTests.m */; };
 		CA69A1FDCBFA411AADE4A4CA /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A2E1EFF09444B39D50A3B9 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8680E5441852D71700B2D841 /* PBXContainerItemProxy */ = {
+		8680E57D185318B200B2D841 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8680E5131852D71700B2D841 /* Project object */;
 			proxyType = 1;
@@ -43,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		50002AE1D84443E58EEC6E95 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		518321928A89427C967EDAB4 /* Pods-ClusterizeTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClusterizeTests.xcconfig"; path = "Pods/Pods-ClusterizeTests.xcconfig"; sourceTree = "<group>"; };
 		64A2E1EFF09444B39D50A3B9 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8680E51B1852D71700B2D841 /* ClusterizeDevelopmentApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClusterizeDevelopmentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8680E51E1852D71700B2D841 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -59,11 +61,7 @@
 		8680E5361852D71700B2D841 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		8680E5371852D71700B2D841 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		8680E5391852D71700B2D841 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8680E53F1852D71700B2D841 /* ClusterizeDevelopmentAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClusterizeDevelopmentAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8680E5401852D71700B2D841 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		8680E5481852D71700B2D841 /* ClusterizeDevelopmentAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClusterizeDevelopmentAppTests-Info.plist"; sourceTree = "<group>"; };
-		8680E54A1852D71700B2D841 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		8680E54C1852D71700B2D841 /* ClusterizeDevelopmentAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClusterizeDevelopmentAppTests.m; sourceTree = "<group>"; };
 		8680E5571852D74800B2D841 /* Centroid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Centroid.h; sourceTree = "<group>"; };
 		8680E5581852D74800B2D841 /* Centroid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Centroid.m; sourceTree = "<group>"; };
 		8680E5591852D74800B2D841 /* ClusterAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClusterAnnotation.h; sourceTree = "<group>"; };
@@ -76,6 +74,14 @@
 		8680E5601852D74800B2D841 /* SingleAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleAnnotation.h; sourceTree = "<group>"; };
 		8680E5611852D74800B2D841 /* SingleAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingleAnnotation.m; sourceTree = "<group>"; };
 		8680E5671852D88500B2D841 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		8680E5691852F91800B2D841 /* libPods.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPods.a; path = "Pods/build/Debug-iphoneos/libPods.a"; sourceTree = "<group>"; };
+		8680E56F185318B200B2D841 /* ClusterizeTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClusterizeTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8680E570185318B200B2D841 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		8680E576185318B200B2D841 /* ClusterizeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClusterizeTests-Info.plist"; sourceTree = "<group>"; };
+		8680E578185318B200B2D841 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8680E57A185318B200B2D841 /* ClusterizeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClusterizeTests.m; sourceTree = "<group>"; };
+		8680E57C185318B200B2D841 /* ClusterizeTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ClusterizeTests-Prefix.pch"; sourceTree = "<group>"; };
+		AB766E6DFC04401C8A28E069 /* libPods-ClusterizeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClusterizeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,13 +97,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8680E53C1852D71700B2D841 /* Frameworks */ = {
+		8680E56C185318B200B2D841 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8680E5411852D71700B2D841 /* XCTest.framework in Frameworks */,
-				8680E5431852D71700B2D841 /* UIKit.framework in Frameworks */,
-				8680E5421852D71700B2D841 /* Foundation.framework in Frameworks */,
+				8680E571185318B200B2D841 /* SenTestingKit.framework in Frameworks */,
+				8680E573185318B200B2D841 /* UIKit.framework in Frameworks */,
+				8680E572185318B200B2D841 /* Foundation.framework in Frameworks */,
+				45F982959993478AB8222D85 /* libPods-ClusterizeTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,10 +116,11 @@
 			children = (
 				8680E5561852D74800B2D841 /* Clusterize */,
 				8680E5241852D71700B2D841 /* ClusterizeDevelopmentApp */,
-				8680E5461852D71700B2D841 /* ClusterizeDevelopmentAppTests */,
+				8680E574185318B200B2D841 /* ClusterizeTests */,
 				8680E51D1852D71700B2D841 /* Frameworks */,
 				8680E51C1852D71700B2D841 /* Products */,
 				50002AE1D84443E58EEC6E95 /* Pods.xcconfig */,
+				518321928A89427C967EDAB4 /* Pods-ClusterizeTests.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -120,7 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				8680E51B1852D71700B2D841 /* ClusterizeDevelopmentApp.app */,
-				8680E53F1852D71700B2D841 /* ClusterizeDevelopmentAppTests.xctest */,
+				8680E56F185318B200B2D841 /* ClusterizeTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,12 +136,15 @@
 		8680E51D1852D71700B2D841 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8680E5691852F91800B2D841 /* libPods.a */,
 				8680E5671852D88500B2D841 /* MapKit.framework */,
 				8680E51E1852D71700B2D841 /* Foundation.framework */,
 				8680E5201852D71700B2D841 /* CoreGraphics.framework */,
 				8680E5221852D71700B2D841 /* UIKit.framework */,
 				8680E5401852D71700B2D841 /* XCTest.framework */,
 				64A2E1EFF09444B39D50A3B9 /* libPods.a */,
+				8680E570185318B200B2D841 /* SenTestingKit.framework */,
+				AB766E6DFC04401C8A28E069 /* libPods-ClusterizeTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -164,24 +175,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		8680E5461852D71700B2D841 /* ClusterizeDevelopmentAppTests */ = {
-			isa = PBXGroup;
-			children = (
-				8680E54C1852D71700B2D841 /* ClusterizeDevelopmentAppTests.m */,
-				8680E5471852D71700B2D841 /* Supporting Files */,
-			);
-			path = ClusterizeDevelopmentAppTests;
-			sourceTree = "<group>";
-		};
-		8680E5471852D71700B2D841 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				8680E5481852D71700B2D841 /* ClusterizeDevelopmentAppTests-Info.plist */,
-				8680E5491852D71700B2D841 /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		8680E5561852D74800B2D841 /* Clusterize */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +192,25 @@
 			);
 			name = Clusterize;
 			path = ../Clusterize;
+			sourceTree = "<group>";
+		};
+		8680E574185318B200B2D841 /* ClusterizeTests */ = {
+			isa = PBXGroup;
+			children = (
+				8680E57A185318B200B2D841 /* ClusterizeTests.m */,
+				8680E575185318B200B2D841 /* Supporting Files */,
+			);
+			path = ClusterizeTests;
+			sourceTree = "<group>";
+		};
+		8680E575185318B200B2D841 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8680E576185318B200B2D841 /* ClusterizeTests-Info.plist */,
+				8680E577185318B200B2D841 /* InfoPlist.strings */,
+				8680E57C185318B200B2D841 /* ClusterizeTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -223,23 +235,25 @@
 			productReference = 8680E51B1852D71700B2D841 /* ClusterizeDevelopmentApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8680E53E1852D71700B2D841 /* ClusterizeDevelopmentAppTests */ = {
+		8680E56E185318B200B2D841 /* ClusterizeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8680E5531852D71700B2D841 /* Build configuration list for PBXNativeTarget "ClusterizeDevelopmentAppTests" */;
+			buildConfigurationList = 8680E57F185318B200B2D841 /* Build configuration list for PBXNativeTarget "ClusterizeTests" */;
 			buildPhases = (
-				8680E53B1852D71700B2D841 /* Sources */,
-				8680E53C1852D71700B2D841 /* Frameworks */,
-				8680E53D1852D71700B2D841 /* Resources */,
+				60D6A5501177459CA7394575 /* Check Pods Manifest.lock */,
+				8680E56B185318B200B2D841 /* Sources */,
+				8680E56C185318B200B2D841 /* Frameworks */,
+				8680E56D185318B200B2D841 /* Resources */,
+				6A05BB69DF7142D1A17C1DBC /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8680E5451852D71700B2D841 /* PBXTargetDependency */,
+				8680E57E185318B200B2D841 /* PBXTargetDependency */,
 			);
-			name = ClusterizeDevelopmentAppTests;
-			productName = ClusterizeDevelopmentAppTests;
-			productReference = 8680E53F1852D71700B2D841 /* ClusterizeDevelopmentAppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
+			name = ClusterizeTests;
+			productName = ClusterizeTests;
+			productReference = 8680E56F185318B200B2D841 /* ClusterizeTests.octest */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -249,11 +263,6 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Stanislaw Pankevich";
-				TargetAttributes = {
-					8680E53E1852D71700B2D841 = {
-						TestTargetID = 8680E51A1852D71700B2D841;
-					};
-				};
 			};
 			buildConfigurationList = 8680E5161852D71700B2D841 /* Build configuration list for PBXProject "ClusterizeDevelopmentApp" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -269,7 +278,7 @@
 			projectRoot = "";
 			targets = (
 				8680E51A1852D71700B2D841 /* ClusterizeDevelopmentApp */,
-				8680E53E1852D71700B2D841 /* ClusterizeDevelopmentAppTests */,
+				8680E56E185318B200B2D841 /* ClusterizeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -286,11 +295,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8680E53D1852D71700B2D841 /* Resources */ = {
+		8680E56D185318B200B2D841 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8680E54B1852D71700B2D841 /* InfoPlist.strings in Resources */,
+				8680E579185318B200B2D841 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +319,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		60D6A5501177459CA7394575 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		6A05BB69DF7142D1A17C1DBC /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-ClusterizeTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		87C513AD5F6042D8A74BCAA9 /* Copy Pods Resources */ = {
@@ -345,21 +384,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8680E53B1852D71700B2D841 /* Sources */ = {
+		8680E56B185318B200B2D841 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8680E54D1852D71700B2D841 /* ClusterizeDevelopmentAppTests.m in Sources */,
+				8680E57B185318B200B2D841 /* ClusterizeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8680E5451852D71700B2D841 /* PBXTargetDependency */ = {
+		8680E57E185318B200B2D841 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8680E51A1852D71700B2D841 /* ClusterizeDevelopmentApp */;
-			targetProxy = 8680E5441852D71700B2D841 /* PBXContainerItemProxy */;
+			targetProxy = 8680E57D185318B200B2D841 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -388,10 +427,10 @@
 			name = Main_iPad.storyboard;
 			sourceTree = "<group>";
 		};
-		8680E5491852D71700B2D841 /* InfoPlist.strings */ = {
+		8680E577185318B200B2D841 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8680E54A1852D71700B2D841 /* en */,
+				8680E578185318B200B2D841 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -501,45 +540,43 @@
 			};
 			name = Release;
 		};
-		8680E5541852D71700B2D841 /* Debug */ = {
+		8680E580185318B200B2D841 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 518321928A89427C967EDAB4 /* Pods-ClusterizeTests.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ClusterizeDevelopmentApp.app/ClusterizeDevelopmentApp";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ClusterizeDevelopmentApp/ClusterizeDevelopmentApp-Prefix.pch";
+				GCC_PREFIX_HEADER = "ClusterizeTests/ClusterizeTests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "ClusterizeDevelopmentAppTests/ClusterizeDevelopmentAppTests-Info.plist";
+				INFOPLIST_FILE = "ClusterizeTests/ClusterizeTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
-		8680E5551852D71700B2D841 /* Release */ = {
+		8680E581185318B200B2D841 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 518321928A89427C967EDAB4 /* Pods-ClusterizeTests.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ClusterizeDevelopmentApp.app/ClusterizeDevelopmentApp";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ClusterizeDevelopmentApp/ClusterizeDevelopmentApp-Prefix.pch";
-				INFOPLIST_FILE = "ClusterizeDevelopmentAppTests/ClusterizeDevelopmentAppTests-Info.plist";
+				GCC_PREFIX_HEADER = "ClusterizeTests/ClusterizeTests-Prefix.pch";
+				INFOPLIST_FILE = "ClusterizeTests/ClusterizeTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -564,11 +601,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8680E5531852D71700B2D841 /* Build configuration list for PBXNativeTarget "ClusterizeDevelopmentAppTests" */ = {
+		8680E57F185318B200B2D841 /* Build configuration list for PBXNativeTarget "ClusterizeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8680E5541852D71700B2D841 /* Debug */,
-				8680E5551852D71700B2D841 /* Release */,
+				8680E580185318B200B2D841 /* Debug */,
+				8680E581185318B200B2D841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

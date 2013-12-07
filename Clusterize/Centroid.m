@@ -14,38 +14,21 @@
     self = [super init];
 
     if (self == nil) return nil;
-    
-    self.points = [NSMutableArray array];
+
+    self.totalCoordinate = CLLocationCoordinate2DMake(0, 0);
 
     return self;
 }
 
-- (void)calculateLocation {
-    if (self.points.count == 0) return;
-
-    CLLocationDegrees minLat = INT_MAX;
-    CLLocationDegrees minLng = INT_MAX;
-    CLLocationDegrees maxLat = -INT_MAX;
-    CLLocationDegrees maxLng = -INT_MAX;
-
-    CLLocationDegrees totalLat = 0;
-    CLLocationDegrees totalLng = 0;
-
-    for(id <MKAnnotation> a in self.points){
-
-        CLLocationDegrees lat = [a coordinate].latitude;
-        CLLocationDegrees lng = [a coordinate].longitude;
-
-        minLat = MIN(minLat, lat);
-        minLng = MIN(minLng, lng);
-        maxLat = MAX(maxLat, lat);
-        maxLng = MAX(maxLng, lng);
-
-        totalLat += lat;
-        totalLng += lng;
+- (void)calculateLocationBasedOnAccumulatedData {
+    if (self.numberOfAnnotations > 0) {
+        self.location = [[CLLocation alloc] initWithLatitude:(self.totalCoordinate.latitude / self.numberOfAnnotations) longitude:(self.totalCoordinate.longitude / self.numberOfAnnotations)];
     }
+}
 
-    self.location = [[CLLocation alloc] initWithLatitude:(totalLat / self.points.count) longitude:(totalLng / self.points.count)];
+- (void)invalidateAccumulatedData {
+    self.numberOfAnnotations = 0;
+    self.totalCoordinate = CLLocationCoordinate2DMake(0, 0);
 }
 
 - (void)setLocation:(CLLocation *)location {
@@ -54,6 +37,10 @@
     }
     
     _location = [location copy];
+}
+
+- (MKMapPoint)mapPoint {
+    return MKMapPointForCoordinate(self.location.coordinate);
 }
 
 @end

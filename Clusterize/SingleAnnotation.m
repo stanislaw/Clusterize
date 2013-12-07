@@ -9,5 +9,4 @@
 #import "SingleAnnotation.h"
 
 @implementation SingleAnnotation
-
 @end

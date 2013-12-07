@@ -17,6 +17,10 @@
 #import "KDTree.h"
 #import "KDTreeNode.h"
 
+#import "Centroid.h"
+
+#import "Geometry.h"
+
 @interface KDTree ()
 
 @property (nonatomic) KDTreeNode *root;
@@ -56,11 +60,19 @@
 
     NSMutableArray *result = [NSMutableArray array];
 
+    for (Centroid *centroid in centroids) {
+        [centroid invalidateAccumulatedData];
+    }
+
     [self doSearchInMapRect:rect
          mutableAnnotations:result
                     curNode:self.root
                    curLevel:0
      withRespectToCentroids:centroids];
+
+    [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
+        [centroid calculateLocationBasedOnAccumulatedData];
+    }];
 
     return result;
 }
@@ -71,53 +83,108 @@
                  curLevel:(NSInteger)level
    withRespectToCentroids:(NSMutableArray *)centroids {
 
-    if (curNode == nil) {
-        abort();
-    }
+    NSParameterAssert(curNode);
 
     if (curNode.annotation) {
-        if (MKMapRectContainsPoint(mapRect, MKMapPointForCoordinate(curNode.annotation.coordinate))) {
-            [annotations addObject:curNode.annotation];
+        NSAssert(curNode.numberOfAnnotations == 1, nil);
+        
+        __block CLLocationDistance minimalDistance = NSUIntegerMax;
+        __block NSUInteger bestCenterIndex = NSNotFound;
+
+        CLLocation *location = curNode.annotation;
+
+        [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
+            CLLocationDistance distanceBeetweenCenterAndPoint = [location distanceFromLocation:centroid.location];
+
+            if (distanceBeetweenCenterAndPoint < minimalDistance) {
+                minimalDistance = distanceBeetweenCenterAndPoint;
+                bestCenterIndex = idx;
+            }
+        }];
+
+        if (bestCenterIndex != NSNotFound) {
+            Centroid *bestCentroidFound = [centroids objectAtIndex:bestCenterIndex];
+
+            bestCentroidFound.totalCoordinate = CLLocationCoordinate2DMake(bestCentroidFound.totalCoordinate.latitude + location.coordinate.latitude, bestCentroidFound.totalCoordinate.longitude + location.coordinate.longitude);
+
+            bestCentroidFound.numberOfAnnotations++;
+        } else {
+            abort();
         }
 
         return;
     }
 
-    MKMapPoint mapPoint = curNode.medianMapPoint;
-
-    BOOL useY = (BOOL)(level % 2);
-
-    float val = (useY ? mapPoint.y : mapPoint.x);
-    float minVal = (useY ? MKMapRectGetMinY(mapRect) : MKMapRectGetMinX(mapRect));
-    float maxVal = (useY ? MKMapRectGetMaxY(mapRect) : MKMapRectGetMaxX(mapRect));
-
-    if (maxVal < val) {
-        [self doSearchInMapRect:mapRect
-             mutableAnnotations:annotations
-                        curNode:curNode.left
-                       curLevel:(level + 1)];
+    if (MKMapRectIntersectsRect(mapRect, curNode.mapRect) == NO) {
+        return;
     }
 
-    else if (minVal > val){
-        [self doSearchInMapRect:mapRect
-             mutableAnnotations:annotations
-                        curNode:curNode.right
-                       curLevel:(level + 1)];
+    __block BOOL currentNodeAlreadyContainsCentroid = NO;
+    __block CLLocationDistance minimalDistanceBeetweenNodeAndCentroid = NSUIntegerMax;
+    __block NSUInteger candidateCentroidIndex = NSNotFound;
+
+    [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger centroidIndex, BOOL *stop) {
+        CLLocationDistance distanceBeetweenNodeAndCentroid = MKMapRectDistanceToMapPoint(curNode.mapRect, centroid.mapPoint);
+
+        if (distanceBeetweenNodeAndCentroid == 0) {
+            if (currentNodeAlreadyContainsCentroid) {
+                *stop = YES;
+                candidateCentroidIndex = NSNotFound;
+                return;
+            } else {
+                minimalDistanceBeetweenNodeAndCentroid = 0;
+                currentNodeAlreadyContainsCentroid = YES;
+            }
+        }
+
+        // TODO check one center exist!
+        else if (minimalDistanceBeetweenNodeAndCentroid > distanceBeetweenNodeAndCentroid) {
+            minimalDistanceBeetweenNodeAndCentroid = distanceBeetweenNodeAndCentroid;
+            candidateCentroidIndex = centroidIndex;
+        }
+    }];
+
+    if (candidateCentroidIndex != NSNotFound) {
+        Centroid *candidateCentroid = [centroids objectAtIndex:candidateCentroidIndex];
+
+        __block BOOL candidateCentroidDominatesAllOtherCentroids = YES;
+
+        [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger centroidIndex, BOOL *stop) {
+            if (centroidIndex == candidateCentroidIndex) {
+                return;
+            }
+
+            MKMapPoint firstDecisionLinePoint = MKMapPointMake((candidateCentroid.mapPoint.x + centroid.mapPoint.x) / 2, (candidateCentroid.mapPoint.y + centroid.mapPoint.y) / 2);
+
+            double decisionLineSlope = -1 * (centroid.mapPoint.x - candidateCentroid.mapPoint.x) * (centroid.mapPoint.y - candidateCentroid.mapPoint.y);
+
+            double b = firstDecisionLinePoint.y - decisionLineSlope * firstDecisionLinePoint.x;
+
+            MKMapPoint secondDecisionLinePoint = MKMapPointMake(0, b);
+
+            MKMapLine decisionLine = MKMapLineMake(firstDecisionLinePoint, secondDecisionLinePoint);
+
+            if (MKMapLineIntersectsRect(decisionLine, curNode.mapRect)) {
+                candidateCentroidDominatesAllOtherCentroids = NO;
+                *stop = YES;
+            }
+        }];
+
+        if (candidateCentroidDominatesAllOtherCentroids) {
+            candidateCentroid.numberOfAnnotations += curNode.numberOfAnnotations;
+
+            candidateCentroid.totalCoordinate = CLLocationCoordinate2DMake(
+                candidateCentroid.totalCoordinate.latitude + curNode.totalCoordinate.latitude,
+                candidateCentroid.totalCoordinate.longitude + curNode.totalCoordinate.longitude
+            );
+
+            return;
+        }
     }
 
-    else {
+    [self doSearchInMapRect:mapRect mutableAnnotations:annotations curNode:curNode.left curLevel:(level + 1) withRespectToCentroids:centroids];
 
-        [self doSearchInMapRect:mapRect
-             mutableAnnotations:annotations
-                        curNode:curNode.left
-                       curLevel:(level + 1)];
-
-        [self doSearchInMapRect:mapRect
-             mutableAnnotations:annotations
-                        curNode:curNode.right
-                       curLevel:(level + 1)];
-    }
-    
+    [self doSearchInMapRect:mapRect mutableAnnotations:annotations curNode:curNode.right curLevel:(level + 1) withRespectToCentroids:centroids];
 }
 
 
@@ -214,6 +281,7 @@
 
     NSArray *leftAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(0, medianIdx)];
     NSArray *rightAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(medianIdx, count - medianIdx)];
+
     NSAssert([leftAnnotations containsObject:medianAnnotation] == NO, nil);
     NSAssert([rightAnnotations containsObject:medianAnnotation], nil);
 

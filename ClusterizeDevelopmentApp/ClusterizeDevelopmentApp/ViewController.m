@@ -26,7 +26,7 @@
     
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 10000; i++) {
         CLLocation *randomCoordinate = [self randomLocation];
 
         [self.annotations addObject:randomCoordinate];
@@ -85,7 +85,7 @@
     double widthInterval = ceil(widthPercentage * mapRect.size.width);
     double heightInterval = ceil(heightPercentage * mapRect.size.height);
 
-    CLLocationDistance delta = 0;
+    __block CLLocationDistance delta = 0;
 
     if (centroids == nil) {
         centroids = [NSMutableArray array];
@@ -101,57 +101,29 @@
                 [centroids addObject:centroid];
             }
         }
-
-        delta = NSNotFound;
-    } else {
-        for (Centroid *centroid in centroids) {
-            [centroid calculateLocation];
-
-            //NSLog(@"lala %f", centroid.locationDelta);
-
-            delta += centroid.locationDelta;
-            
-            [centroid.points removeAllObjects];
-        }
     }
 
-    NSArray *visibleAnnotations = [self.kdTree annotationsInMapRect:self.mapView.visibleMapRect withRespectToCentroids:centroids];
+    [self.kdTree annotationsInMapRect:self.mapView.visibleMapRect withRespectToCentroids:centroids];
 
-    [visibleAnnotations enumerateObjectsUsingBlock:^(CLLocation *coordinate, NSUInteger idx, BOOL *stop) {
-        __block CLLocationDistance minimalDistance = NSUIntegerMax;
-        __block NSUInteger bestCenterIndex = NSNotFound;
-
-        [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
-            CLLocationDistance distanceBeetweenCenterAndPoint = [coordinate distanceFromLocation:centroid.location];
-
-            if (distanceBeetweenCenterAndPoint < minimalDistance) {
-                minimalDistance = distanceBeetweenCenterAndPoint;
-                bestCenterIndex = idx;
-            }
-        }];
-
-        if (bestCenterIndex != NSNotFound) {
-            Centroid *bestCentroidFound = [centroids objectAtIndex:bestCenterIndex];
-
-            [bestCentroidFound.points addObject:coordinate];
-        } else {
-            abort();
-        }
+    [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
+        delta += centroid.locationDelta;
     }];
 
-    if (delta < 300.0 || iteration == 50) {
+    LS(delta );
+
+    if (delta < 600.0 || iteration == 50) {
         NSLog(@"Displaying clusters on iteration and delta: %u %f", iteration, delta);
 
         [self.mapView removeAnnotations:self.mapView.annotations];
 
         for (Centroid *centroid in centroids) {
-            if (centroid.points.count == 0) {
-
+            if (centroid.numberOfAnnotations == 0) {
+                // Intentionally nothing
             }
 
-            else if (centroid.points.count == 1) {
+            else if (centroid.numberOfAnnotations == 1) {
                 SingleAnnotation *singleAnnotation = [[SingleAnnotation alloc] init];
-                singleAnnotation.coordinate = [centroid.points.firstObject coordinate];
+                singleAnnotation.coordinate = [centroid.location coordinate];
 
                 [self.mapView addAnnotation:singleAnnotation];
             }
