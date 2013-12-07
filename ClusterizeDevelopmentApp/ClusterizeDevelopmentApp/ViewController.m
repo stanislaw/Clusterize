@@ -26,7 +26,7 @@
     
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 500; i++) {
         CLLocation *randomCoordinate = [self randomLocation];
 
         [self.annotations addObject:randomCoordinate];
