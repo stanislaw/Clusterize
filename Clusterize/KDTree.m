@@ -110,6 +110,8 @@
 - (KDTreeNode *)buildTree:(NSArray *)annotations level:(NSInteger)curLevel mapRect:(MKMapRect)mapRect {
     NSInteger count = [annotations count];
 
+    LS(mapRect);
+    
     if (count == 0) {
         return nil;
     }
