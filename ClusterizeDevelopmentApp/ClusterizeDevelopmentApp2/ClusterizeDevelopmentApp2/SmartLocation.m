@@ -13,10 +13,12 @@
 @synthesize mapPoint = _mapPoint;
 
 - (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
+    if (CLLocationCoordinate2DIsValid(coordinate) == NO) {
+        abort();
+    }
+    
     self = [super initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
 
-    if (self == nil) return nil;
-    
     _mapPoint = MKMapPointForCoordinate(self.coordinate);
 
     return self;

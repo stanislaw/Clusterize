@@ -14,6 +14,4 @@
 
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 
-@property (nonatomic) ClusterAnnotation *ownerCluster;
-
 @end

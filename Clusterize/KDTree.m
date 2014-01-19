@@ -266,7 +266,7 @@
     NSInteger count = [annotations count];
 
     if (count == 0) {
-        return nil;
+        abort();
     }
 
     KDTreeNode *treeNode = [[KDTreeNode alloc] init];

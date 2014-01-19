@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MKAnnotation.h>
+#import <MapKit/MKGeometry.h>
 
 @interface ClusterAnnotation : NSObject <MKAnnotation>
 
-@property (nonatomic) CLLocationCoordinate2D coordinate;
+@property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
+- (void)calculateCoordinate;
 
 @property (copy, nonatomic) NSString *title;
+
+@property (nonatomic) NSMutableSet *locations;
 
 @end

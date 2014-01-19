@@ -25,7 +25,6 @@
 
 @property (nonatomic) KDTreeNode *left;
 @property (nonatomic) KDTreeNode *right;
-@property (nonatomic) MKMapPoint medianMapPoint;
 @property (nonatomic) MKMapRect mapRect;
 
 @property (nonatomic) NSUInteger numberOfAnnotations;

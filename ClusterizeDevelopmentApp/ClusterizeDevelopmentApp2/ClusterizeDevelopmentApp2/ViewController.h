@@ -21,4 +21,6 @@
 
 @property (nonatomic) KDTree *kdTree;
 
+@property (nonatomic) BOOL debugging;
+
 @end

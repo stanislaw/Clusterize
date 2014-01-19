@@ -71,41 +71,19 @@
         return;
     }
 
-    MKMapPoint mapPoint = curNode.medianMapPoint;
-
-    BOOL useY = (BOOL)(level % 2);
-
-    float val = (useY ? mapPoint.y : mapPoint.x);
-    float minVal = (useY ? MKMapRectGetMinY(mapRect) : MKMapRectGetMinX(mapRect));
-    float maxVal = (useY ? MKMapRectGetMaxY(mapRect) : MKMapRectGetMaxX(mapRect));
-
-    if (maxVal < val) {
+    if (MKMapRectIntersectsRect(curNode.left.mapRect, mapRect)) {
         [self doSearchInMapRect:mapRect
              mutableAnnotations:annotations
                         curNode:curNode.left
                        curLevel:(level + 1)];
     }
 
-    else if (minVal > val){
+    if (MKMapRectIntersectsRect(curNode.right.mapRect, mapRect)) {
         [self doSearchInMapRect:mapRect
              mutableAnnotations:annotations
                         curNode:curNode.right
                        curLevel:(level + 1)];
     }
-
-    else {
-
-        [self doSearchInMapRect:mapRect
-             mutableAnnotations:annotations
-                        curNode:curNode.left
-                       curLevel:(level + 1)];
-
-        [self doSearchInMapRect:mapRect
-             mutableAnnotations:annotations
-                        curNode:curNode.right
-                       curLevel:(level + 1)];
-    }
-
 }
 
 - (KDTreeNode *)buildTree:(NSArray *)annotations level:(NSInteger)curLevel mapRect:(MKMapRect)mapRect {
@@ -120,7 +98,6 @@
 
     if (count == 1) {
         treeNode.annotation = [annotations firstObject];
-        treeNode.medianMapPoint = MKMapPointForCoordinate(treeNode.annotation.coordinate);
         treeNode.mapRect = [self mapRectThatFitsAnnotations:@[ treeNode.annotation ]];
 
         return treeNode;
@@ -145,7 +122,6 @@
     // Median map point
     NSInteger medianIdx = [sortedAnnotations count] / 2;
     CLLocation *medianAnnotation = [sortedAnnotations objectAtIndex:medianIdx];
-    treeNode.medianMapPoint = MKMapPointForCoordinate(medianAnnotation.coordinate);
 
     NSArray *leftAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(0, medianIdx)];
     NSArray *rightAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(medianIdx, count - medianIdx)];
@@ -162,6 +138,7 @@
     treeNode.left = [self buildTree:leftAnnotations level:(curLevel + 1) mapRect:leftLeaveMapRect];
     treeNode.right = [self buildTree:rightAnnotations level:(curLevel + 1) mapRect:rightLeaveMapRect];
 
+    /*
     __block MKMapPoint sumOfMapPoints = MKMapPointMake(0, 0);
 
     [sortedAnnotations enumerateObjectsUsingBlock:^(CLLocation *annotation, NSUInteger idx, BOOL *stop) {
@@ -171,7 +148,8 @@
 
     treeNode.sumOfMapPoints = sumOfMapPoints;
     treeNode.numberOfAnnotations = count;
-
+     */
+    
     return treeNode;
 }
 
@@ -184,6 +162,7 @@
 
         fitRect = MKMapRectUnion(fitRect, pointRect);
     }
+    
     return fitRect;
 }
 

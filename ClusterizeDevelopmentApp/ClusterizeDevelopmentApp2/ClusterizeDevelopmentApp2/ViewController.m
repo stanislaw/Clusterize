@@ -12,11 +12,17 @@
 #import "SmartLocation.h"
 #import "Geometry.h"
 
+static NSString * const DebuggingIdentifier1 = @"1";
+static NSString * const DebuggingIdentifier2 = @"2";
+static NSString * const DebuggingIdentifier3 = @"3";
+
 @implementation ViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self.debugging = YES;
 
     self.annotations = [NSMutableArray array];
 
@@ -26,8 +32,8 @@
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 1000; i++) {
-        SmartLocation *randomCoordinate = [self randomLocation];
+    for (int i = 0; i < 100; i++) {
+        SmartLocation *randomCoordinate = [self randomLocation22];
 
         [self.annotations addObject:randomCoordinate];
     }
@@ -36,7 +42,13 @@
 
     self.mapView = mapView;
 
-    [self clusterAnnotations];
+    for (SmartLocation *location in self.annotations) {
+        SingleAnnotation *annotation = [[SingleAnnotation alloc] init];
+        annotation.coordinate = location.coordinate;
+
+        //[self.mapView addAnnotation:annotation];
+    }
+    //[self clusterAnnotations];
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
@@ -49,9 +61,9 @@
         if (annotationView == nil) {
             annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:singleAnnotationIdentifier];
             annotationView.pinColor = MKPinAnnotationColorGreen;
-        } else {
-            annotationView.annotation = annotation;
         }
+
+        annotationView.annotation = annotation;
 
         return annotationView;
     }
@@ -61,11 +73,11 @@
 
         if (annotationView == nil) {
             annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:clusterAnnotationIdentifier];
-            annotationView.pinColor = MKPinAnnotationColorPurple;
+            annotationView.pinColor = MKPinAnnotationColorRed;
             annotationView.canShowCallout = YES;
-        } else {
-            annotationView.annotation = annotation;
         }
+
+        annotationView.annotation = annotation;
 
         return annotationView;
     }
@@ -73,16 +85,50 @@
     return nil;
 }
 
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay {
+    /* Debugging polygons */
+    if ([overlay isKindOfClass:MKPolygon.class]) {
+        MKPolygon *polygon = (MKPolygon *)overlay;
+
+        MKPolygonView *polygonView = [[MKPolygonView alloc] initWithPolygon:polygon];
+
+
+        if ([polygon.title isEqualToString:DebuggingIdentifier1]) {
+            polygonView.lineWidth = 2.0;
+            polygonView.strokeColor = [UIColor redColor];
+            //polygonView.fillColor = [UIColor greenColor];
+        } else if ([polygon.title isEqualToString:DebuggingIdentifier2]) {
+            polygonView.lineWidth = 1.0;
+            polygonView.strokeColor = [UIColor blueColor];
+        } else if ([polygon.title isEqualToString:DebuggingIdentifier3]) {
+            polygonView.lineWidth = 2.0;
+            polygonView.strokeColor = [UIColor greenColor];
+        }
+
+        
+
+        return polygonView;
+    }
+    
+    return nil;
+}
+
+
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    NSLog(@"regionDidChangeAnimated:");
+
+    [self.mapView removeAnnotations:self.mapView.annotations];
+    [self.mapView removeOverlays:self.mapView.overlays];
+    
     [self clusterAnnotations];
 }
 
 - (void)clusterAnnotations {
-    [self.mapView removeAnnotations:self.mapView.annotations];
-
     MKMapRect mapRect = self.mapView.visibleMapRect;
 
     NSMutableArray *locations = [NSMutableArray arrayWithArray:[self.kdTree annotationsInMapRect:mapRect]];
+
+    NSMutableArray *locationsToAddAsSingleAnnotations = [locations mutableCopy];
 
     for (SmartLocation *location in locations) {
         location.annotation = nil;
@@ -90,18 +136,18 @@
 
     NSMutableArray *clusterAnnotations = [NSMutableArray array];
 
-    double widthPercentage = [self annotationSize].width / CGRectGetWidth(self.mapView.frame);
-    double heightPercentage = [self annotationSize].height / CGRectGetHeight(self.mapView.frame);
+    double widthPercentage = [self annotationSize].width / CGRectGetWidth(self.mapView.bounds);
+    double heightPercentage = [self annotationSize].height / CGRectGetHeight(self.mapView.bounds);
 
-    double widthInterval = ceil(widthPercentage * self.mapView.visibleMapRect.size.width);
-    double heightInterval = ceil(heightPercentage * self.mapView.visibleMapRect.size.height);
+    double widthInterval = ceil(widthPercentage * mapRect.size.width);
+    double heightInterval = ceil(heightPercentage * mapRect.size.height);
 
 
-    double offsetXPercentage = [self annotationCenterOffset].x / CGRectGetWidth(self.mapView.frame);
-    double offsetYPercentage = [self annotationCenterOffset].y / CGRectGetHeight(self.mapView.frame);
+    double offsetXPercentage = [self annotationCenterOffset].x / CGRectGetWidth(self.mapView.bounds);
+    double offsetYPercentage = [self annotationCenterOffset].y / CGRectGetHeight(self.mapView.bounds);
 
-    double offsetXInterval = ceil(offsetXPercentage * self.mapView.visibleMapRect.size.width);
-    double offsetYInterval = ceil(offsetYPercentage * self.mapView.visibleMapRect.size.height);
+    double offsetXInterval = ceil(offsetXPercentage * mapRect.size.width);
+    double offsetYInterval = ceil(offsetYPercentage * mapRect.size.height);
 
 
     MKMapRect (^mapRectForLocation)(SmartLocation *location) = ^(SmartLocation *location) {
@@ -117,15 +163,17 @@
         return mapRect;
     };
 
-    NSLog(@"WTF %f %f", widthInterval, heightInterval);
-
     for (SmartLocation *location in locations) {
-
         MKMapRect locationRect = mapRectForLocation(location);
 
         MKMapRect locationAroundRect = MKMapRectInset(locationRect, - (widthInterval / 2), - (heightInterval / 2));
 
         NSArray *relevantLocations = [self.kdTree annotationsInMapRect:locationAroundRect];
+
+
+        //NSLog(@"%u", relevantLocations.count);
+
+
 
         for (SmartLocation *relevantLocation in relevantLocations) {
 
@@ -135,36 +183,111 @@
 
             MKMapRect relevantLocationRect = mapRectForLocation(relevantLocation);
 
-            if (MKMapRectIntersectsRect(locationRect, relevantLocationRect)) {
-                if (location.annotation) {
-                    relevantLocation.annotation = location.annotation;
-                } else {
-                    ClusterAnnotation *clusterAnnotation = [[ClusterAnnotation alloc] init];
-                    clusterAnnotation.coordinate = location.coordinate;
-                    location.annotation = clusterAnnotation;
+            if (self.debugging) {
+                MKMapPoint points[5];
+                points[0] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
+                points[1] = MKMapPointMake(locationRect.origin.x + widthInterval, locationRect.origin.y);
+                points[2] = MKMapPointMake(locationRect.origin.x + widthInterval, locationRect.origin.y + heightInterval);
+                points[3] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y + heightInterval);
+                points[4] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
 
-                    relevantLocation.annotation = location.annotation;
+                MKPolygon *polygon = [MKPolygon polygonWithPoints:points count:5];
+                polygon.title = DebuggingIdentifier1;
+
+                [self.mapView addOverlay:polygon];
+
+
+                MKMapRect locationRect = locationAroundRect;
+
+                points[0] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
+                points[1] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y);
+                points[2] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y + locationRect.size.height);
+                points[3] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y + locationRect.size.height);
+                points[4] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
+
+                polygon = [MKPolygon polygonWithPoints:points count:5];
+                polygon.title = DebuggingIdentifier2;
+
+                [self.mapView addOverlay:polygon];
+
+                locationRect = relevantLocationRect;
+
+                points[0] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
+                points[1] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y);
+                points[2] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y + locationRect.size.height);
+                points[3] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y + locationRect.size.height);
+                points[4] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
+                
+                polygon = [MKPolygon polygonWithPoints:points count:5];
+                polygon.title = DebuggingIdentifier3;
+
+                [self.mapView addOverlay:polygon];
+            }
+
+
+            if (MKMapRectIntersectsRect(locationRect, relevantLocationRect)) {
+                if (location.annotation == nil && relevantLocation.annotation == nil) {
+                    ClusterAnnotation *clusterAnnotation = [[ClusterAnnotation alloc] init];
+                    clusterAnnotation.locations = [NSMutableSet set];
+
+                    [clusterAnnotation.locations addObject:location];
+                    [clusterAnnotation.locations addObject:relevantLocation];
+
+                    [locationsToAddAsSingleAnnotations removeObject:location];
+                    [locationsToAddAsSingleAnnotations removeObject:relevantLocation];
+
+                    location.annotation = clusterAnnotation;
+                    relevantLocation.annotation = clusterAnnotation;
 
                     [clusterAnnotations addObject:clusterAnnotation];
-                }
-            } else {
+                } else if (location.annotation && relevantLocation.annotation == nil) {
+                    //continue;
+                    ClusterAnnotation *clusterAnnotation = location.annotation;
 
+                    [clusterAnnotation.locations addObject:relevantLocation];
+
+                    relevantLocation.annotation = clusterAnnotation;
+
+                    [locationsToAddAsSingleAnnotations removeObject:relevantLocation];
+
+                } else if (location.annotation == nil && relevantLocation) {
+                    //continue;
+
+                    ClusterAnnotation *clusterAnnotation = (ClusterAnnotation *)relevantLocation.annotation;
+
+                    [clusterAnnotation.locations addObject:location];
+
+                    location.annotation = clusterAnnotation;
+
+                    [locationsToAddAsSingleAnnotations removeObject:location];
+                } else {
+                    // Nothing
+                }
             }
         }
+
+        //break;
     }
 
-    [self.mapView addAnnotations:clusterAnnotations];
+    NSLog(@"Number of clusters: %u", clusterAnnotations.count);
 
-    for (SmartLocation *location in locations) {
+    for (ClusterAnnotation *clusterAnnotation in clusterAnnotations) {
+        [clusterAnnotation calculateCoordinate];
+    }
+
+    for (SmartLocation *location in locationsToAddAsSingleAnnotations) {
         if (location.annotation == nil) {
             SingleAnnotation *singleAnnotation = [[SingleAnnotation alloc] init];
             singleAnnotation.coordinate = location.coordinate;
             [self.mapView addAnnotation:singleAnnotation];
         }
     }
+
+    [self.mapView addAnnotations:clusterAnnotations];
+
 }
 
-- (SmartLocation *)randomLocation {
+- (SmartLocation *)randomLocation22 {
     double (^random_double_with_range)(double min, double max) = ^(double min, double max) {
         unsigned long precision = 10000000;
         return ((double)arc4random_uniform(((max - min) * precision)))/precision + min;
@@ -186,11 +309,11 @@
 
 // (-16 -19.5; 32 39);
 - (CGPoint)annotationCenterOffset {
-    return CGPointMake(0, -20);
+    return CGPointMake(0, -19.5);
 }
 
 - (CGSize)annotationSize {
-    return CGSizeMake(32, 40);
+    return CGSizeMake(16, 39);
 }
 
 @end
