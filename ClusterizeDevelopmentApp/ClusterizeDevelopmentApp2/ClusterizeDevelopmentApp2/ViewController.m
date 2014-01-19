@@ -32,7 +32,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 4100; i++) {
+    for (int i = 0; i < 2000; i++) {
         SmartLocation *randomCoordinate = [self randomLocation22];
 
         [self.annotations addObject:randomCoordinate];
@@ -160,17 +160,17 @@ static NSString * const DebuggingIdentifier3 = @"3";
             heightInterval
         );
 
-        mapRect = MKMapRectInset(mapRect, - (widthInterval / 2), - (heightInterval / 2));
+        //mapRect = MKMapRectInset(mapRect, - (widthInterval / 4), - (heightInterval / 4));
 
         return mapRect;
     };
 
-    int NumberOfRedRect = 0;
-
     for (SmartLocation *location in locations) {
+        /*
         if (location.annotation) {
             continue;
         }
+         */
 
         MKMapRect locationRect = mapRectForLocation(location);
 
@@ -230,8 +230,6 @@ static NSString * const DebuggingIdentifier3 = @"3";
                     polygon.title = DebuggingIdentifier3;
                     
                     [self.mapView addOverlay:polygon];
-                    
-                    NumberOfRedRect++;
                 }
 
                 if (location.annotation == nil && relevantLocation.annotation == nil) {
@@ -289,7 +287,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     [self.mapView addAnnotations:clusterAnnotations];
 
-    NSLog(@"Total %d, clusters: %u, red rects: %d", totalAnnotations, clusterAnnotations.count, NumberOfRedRect);
+    NSLog(@"Total %d, clusters: %u, red rects", totalAnnotations, clusterAnnotations.count);
 }
 
 - (SmartLocation *)randomLocation22 {
