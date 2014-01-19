@@ -15,6 +15,9 @@ Drawback: K-Means requires initial guess points.
 
 On iPhone 4 clusters up to 3000 (on 4000 - noticeable delays appear) annotations reasonably well. Scales badly but good appearance compared to that of kingpin and Algorithm 1.
 
+![](https://raw.github.com/stanislaw/Clusterize/master/Screenshot.png)
+
+
 ## TODO
 
 Build a library including both algorithms as "clustering drivers".
