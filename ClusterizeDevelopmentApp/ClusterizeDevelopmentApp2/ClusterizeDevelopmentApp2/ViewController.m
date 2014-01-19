@@ -32,7 +32,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 3000; i++) {
         SmartLocation *randomCoordinate = [self randomLocation22];
 
         [self.annotations addObject:randomCoordinate];
