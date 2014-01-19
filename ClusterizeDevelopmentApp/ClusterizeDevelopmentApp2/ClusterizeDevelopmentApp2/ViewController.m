@@ -32,7 +32,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 400; i++) {
         SmartLocation *randomCoordinate = [self randomLocation22];
 
         [self.annotations addObject:randomCoordinate];
@@ -181,6 +181,10 @@ static NSString * const DebuggingIdentifier3 = @"3";
                 continue;
             }
 
+            if (relevantLocation.annotation) {
+                continue;
+            }
+
             MKMapRect relevantLocationRect = mapRectForLocation(relevantLocation);
 
             if (self.debugging) {
@@ -241,27 +245,21 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
                     [clusterAnnotations addObject:clusterAnnotation];
                 } else if (location.annotation && relevantLocation.annotation == nil) {
-                    //continue;
                     ClusterAnnotation *clusterAnnotation = location.annotation;
 
-                    [clusterAnnotation.locations addObject:relevantLocation];
+                    [clusterAnnotation calculateCoordinate];
 
-                    relevantLocation.annotation = clusterAnnotation;
+                    SmartLocation *centroidLocation = [[SmartLocation alloc] initWithCoordinate:clusterAnnotation.coordinate];
 
-                    [locationsToAddAsSingleAnnotations removeObject:relevantLocation];
+                    MKMapRect centroidRect = mapRectForLocation(centroidLocation);
 
-                } else if (location.annotation == nil && relevantLocation) {
-                    //continue;
+                    if (MKMapRectIntersectsRect(centroidRect, relevantLocationRect)) {
+                        [clusterAnnotation.locations addObject:relevantLocation];
 
-                    ClusterAnnotation *clusterAnnotation = (ClusterAnnotation *)relevantLocation.annotation;
+                        relevantLocation.annotation = clusterAnnotation;
 
-                    [clusterAnnotation.locations addObject:location];
-
-                    location.annotation = clusterAnnotation;
-
-                    [locationsToAddAsSingleAnnotations removeObject:location];
-                } else {
-                    // Nothing
+                        [locationsToAddAsSingleAnnotations removeObject:relevantLocation];
+                    }
                 }
             }
         }
