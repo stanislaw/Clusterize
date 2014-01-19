@@ -18,8 +18,6 @@
 - (void)calculateLocationBasedOnAccumulatedData;
 - (void)invalidateAccumulatedData;
 
-@property (nonatomic) CLLocationDistance locationDelta;
-
 @property (nonatomic) NSUInteger numberOfAnnotations;
 @property (nonatomic) MKMapPoint sumOfMapPoints;
 

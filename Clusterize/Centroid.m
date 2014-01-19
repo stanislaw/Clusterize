@@ -35,10 +35,6 @@
 }
 
 - (void)setLocation:(CLLocation *)location {
-    if (_location != nil) {
-        self.locationDelta = [_location distanceFromLocation:location];
-    }
-    
     _location = [location copy];
 }
 

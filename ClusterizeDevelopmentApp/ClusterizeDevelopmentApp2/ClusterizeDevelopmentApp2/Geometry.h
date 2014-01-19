@@ -1,5 +1,4 @@
 #import <MapKit/MapKit.h>
-#import <EchoLogger/EchoLogger.h>
 
 typedef struct {
     MKMapPoint point1;

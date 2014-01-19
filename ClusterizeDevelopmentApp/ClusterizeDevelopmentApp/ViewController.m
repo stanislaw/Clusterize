@@ -26,7 +26,7 @@
     
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 5000; i++) {
         CLLocation *randomCoordinate = [self randomLocation];
 
         [self.annotations addObject:randomCoordinate];
@@ -80,16 +80,14 @@
 - (void)clusterAnnotationsUsingCenter:(NSMutableArray *)centroids iteration:(NSInteger)iteration {
     MKMapRect mapRect = self.mapView.visibleMapRect;
 
-    double widthPercentage = self.gridSize.width / CGRectGetWidth(self.mapView.frame);
-    double heightPercentage = self.gridSize.height / CGRectGetHeight(self.mapView.frame);
-
-    double widthInterval = ceil(widthPercentage * mapRect.size.width);
-    double heightInterval = ceil(heightPercentage * mapRect.size.height);
-
-    __block CLLocationDistance delta = 0;
-
     if (centroids == nil) {
         centroids = [NSMutableArray array];
+
+        double widthPercentage = self.gridSize.width / CGRectGetWidth(self.mapView.frame);
+        double heightPercentage = self.gridSize.height / CGRectGetHeight(self.mapView.frame);
+
+        double widthInterval = ceil(widthPercentage * mapRect.size.width);
+        double heightInterval = ceil(heightPercentage * mapRect.size.height);
 
         for(int x = mapRect.origin.x; x < mapRect.origin.x + mapRect.size.width; x += widthInterval) {
             for(int y = mapRect.origin.y; y < mapRect.origin.y + mapRect.size.height; y += heightInterval) {
@@ -104,16 +102,14 @@
 
     [self.kdTree annotationsInMapRect:self.mapView.visibleMapRect withRespectToCentroids:centroids];
 
-    [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
-        delta += centroid.locationDelta;
+    [[centroids copy] enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
+        if (centroid.numberOfAnnotations == 0) {
+            [centroids removeObject:centroid];
+        }
     }];
 
-    if (iteration == 0) {
-        delta = NSUIntegerMax;
-    }
-
-    if (delta < 600.0 || iteration == 4) {
-        NSLog(@"Displaying clusters on iteration and delta and centroids number: (%u; %f; %u)", iteration, delta, centroids.count);
+    if (iteration >= 1) {
+        NSLog(@"Displaying clusters on iteration and centroids number: (%u; %u)", iteration, centroids.count);
 
         [self.mapView removeAnnotations:self.mapView.annotations];
 
