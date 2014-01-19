@@ -10,4 +10,16 @@
 
 @implementation SmartLocation
 
+@synthesize mapPoint = _mapPoint;
+
+- (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
+    self = [super initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+
+    if (self == nil) return nil;
+    
+    _mapPoint = MKMapPointForCoordinate(self.coordinate);
+
+    return self;
+}
+
 @end

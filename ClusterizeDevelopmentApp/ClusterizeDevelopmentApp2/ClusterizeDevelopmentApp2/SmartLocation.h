@@ -7,10 +7,13 @@
 //
 
 #import <CoreLocation/CoreLocation.h>
+#import <MapKit/MKGeometry.h>
 
 @interface SmartLocation : CLLocation
 
-@property (nonatomic) NSValue *_annotationPointInMapView;
+- (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
+
+@property (nonatomic, readonly) MKMapPoint mapPoint;
 @property (nonatomic) id annotation;
 
 @end

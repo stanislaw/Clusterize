@@ -21,12 +21,12 @@
     self.annotations = [NSMutableArray array];
 
     MKMapView *mapView = [[MKMapView alloc] initWithFrame:self.view.bounds];
-    mapView.region = MKCoordinateRegionMakeWithDistance([self MoscowLocationKuzminki].coordinate, 50000, 50000);
+    mapView.region = MKCoordinateRegionMakeWithDistance([self MoscowLocation].coordinate, 50000, 50000);
     mapView.delegate = self;
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 1000; i++) {
         SmartLocation *randomCoordinate = [self randomLocation];
 
         [self.annotations addObject:randomCoordinate];
@@ -90,48 +90,60 @@
 
     NSMutableArray *clusterAnnotations = [NSMutableArray array];
 
-    for (int i = 0; i < locations.count; i++) {
-        for (int j = 0; j < locations.count; j++) {
+    double widthPercentage = [self annotationSize].width / CGRectGetWidth(self.mapView.frame);
+    double heightPercentage = [self annotationSize].height / CGRectGetHeight(self.mapView.frame);
 
-            SmartLocation *c1 = locations[i];
-            SmartLocation *c2 = locations[j];
+    double widthInterval = ceil(widthPercentage * self.mapView.visibleMapRect.size.width);
+    double heightInterval = ceil(heightPercentage * self.mapView.visibleMapRect.size.height);
 
-            if ([c1 isEqual:c2]) {
+
+    double offsetXPercentage = [self annotationCenterOffset].x / CGRectGetWidth(self.mapView.frame);
+    double offsetYPercentage = [self annotationCenterOffset].y / CGRectGetHeight(self.mapView.frame);
+
+    double offsetXInterval = ceil(offsetXPercentage * self.mapView.visibleMapRect.size.width);
+    double offsetYInterval = ceil(offsetYPercentage * self.mapView.visibleMapRect.size.height);
+
+
+    MKMapRect (^mapRectForLocation)(SmartLocation *location) = ^(SmartLocation *location) {
+        MKMapPoint locationMapPoint = location.mapPoint;
+
+        MKMapRect mapRect = MKMapRectMake(
+            locationMapPoint.x - widthInterval / 2 + offsetXInterval,
+            locationMapPoint.y - heightInterval / 2 + offsetYInterval,
+            widthInterval,
+            heightInterval
+        );
+
+        return mapRect;
+    };
+
+    NSLog(@"WTF %f %f", widthInterval, heightInterval);
+
+    for (SmartLocation *location in locations) {
+
+        MKMapRect locationRect = mapRectForLocation(location);
+
+        MKMapRect locationAroundRect = MKMapRectInset(locationRect, - (widthInterval / 2), - (heightInterval / 2));
+
+        NSArray *relevantLocations = [self.kdTree annotationsInMapRect:locationAroundRect];
+
+        for (SmartLocation *relevantLocation in relevantLocations) {
+
+            if ([location isEqual:relevantLocation]) {
                 continue;
             }
 
-            //if (!c1._annotationPointInMapView) {
-                c1._annotationPointInMapView = [NSValue valueWithCGPoint:[self.mapView convertCoordinate:c1.coordinate
-                                                                                           toPointToView:self.mapView]];
-            //}
+            MKMapRect relevantLocationRect = mapRectForLocation(relevantLocation);
 
-            //if (!c2._annotationPointInMapView) {
-                c2._annotationPointInMapView = [NSValue valueWithCGPoint:[self.mapView convertCoordinate:c2.coordinate
-                                                                                           toPointToView:self.mapView]];
-            //}
-
-            CGPoint p1 = [c1._annotationPointInMapView CGPointValue];
-            CGPoint p2 = [c2._annotationPointInMapView CGPointValue];
-
-            CGRect r1 = CGRectMake(p1.x - self.annotationSize.width + self.annotationCenterOffset.x,
-                                   p1.y - self.annotationSize.height + self.annotationCenterOffset.y,
-                                   self.annotationSize.width,
-                                   self.annotationSize.height);
-
-            CGRect r2 = CGRectMake(p2.x - self.annotationSize.width + self.annotationCenterOffset.x,
-                                   p2.y - self.annotationSize.height + self.annotationCenterOffset.y,
-                                   self.annotationSize.width,
-                                   self.annotationSize.height);
-
-            if (CGRectIntersectsRect(r1, r2)) {
-                if (c1.annotation) {
-                    c2.annotation = c1.annotation;
+            if (MKMapRectIntersectsRect(locationRect, relevantLocationRect)) {
+                if (location.annotation) {
+                    relevantLocation.annotation = location.annotation;
                 } else {
                     ClusterAnnotation *clusterAnnotation = [[ClusterAnnotation alloc] init];
-                    clusterAnnotation.coordinate = c1.coordinate;
-                    c1.annotation = clusterAnnotation;
+                    clusterAnnotation.coordinate = location.coordinate;
+                    location.annotation = clusterAnnotation;
 
-                    c2.annotation = c1.annotation;
+                    relevantLocation.annotation = location.annotation;
 
                     [clusterAnnotations addObject:clusterAnnotation];
                 }
@@ -163,23 +175,22 @@
     CLLocationDegrees randomCityLatitude = random_double_with_range(SWNEBoxes[0].latitude, SWNEBoxes[1].latitude);
     CLLocationDegrees randomCityLongitude = random_double_with_range(SWNEBoxes[0].longitude, SWNEBoxes[1].longitude);
 
-    return [[SmartLocation alloc] initWithLatitude:randomCityLatitude longitude:randomCityLongitude];
+    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(randomCityLatitude, randomCityLongitude);
+
+    return [[SmartLocation alloc] initWithCoordinate:coordinate];
 }
 
-- (SmartLocation *)MoscowLocationKuzminki {
-    return [[SmartLocation alloc] initWithLatitude:55.699102 longitude:37.743183];
+- (SmartLocation *)MoscowLocation {
+    return [[SmartLocation alloc] initWithLatitude:55.753001 longitude:37.615167];
 }
 
+// (-16 -19.5; 32 39);
 - (CGPoint)annotationCenterOffset {
-    return CGPointMake(0, 20);
+    return CGPointMake(0, -20);
 }
 
 - (CGSize)annotationSize {
-    return CGSizeMake(20, 40);
-}
-
-- (CGSize)gridSize {
-    return CGSizeMake(80, 80);
+    return CGSizeMake(32, 40);
 }
 
 @end
