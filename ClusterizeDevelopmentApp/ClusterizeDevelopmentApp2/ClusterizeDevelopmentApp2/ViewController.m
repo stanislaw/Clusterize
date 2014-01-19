@@ -32,7 +32,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 4000; i++) {
+    for (int i = 0; i < 2000; i++) {
         SmartLocation *randomCoordinate = [self randomLocation22];
 
         [self.annotations addObject:randomCoordinate];
@@ -165,6 +165,8 @@ static NSString * const DebuggingIdentifier3 = @"3";
         return mapRect;
     };
 
+    @autoreleasepool {
+
     for (SmartLocation *location in locations) {
 
         if (location.annotation) {
@@ -174,17 +176,16 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
         MKMapRect locationRect = mapRectForLocation(location);
 
-        MKMapRect locationAroundRect = MKMapRectInset(locationRect, - (locationRect.size.width / 2), - (locationRect.size.height / 2));
+        MKMapRect locationAroundRect = MKMapRectInset(locationRect, - (locationRect.size.width), - (locationRect.size.height));
 
         NSArray *relevantLocations = [self.kdTree annotationsInMapRect:locationAroundRect];
 
         for (SmartLocation *relevantLocation in relevantLocations) {
-
-            if ([location isEqual:relevantLocation]) {
+            if (relevantLocation.annotation) {
                 continue;
             }
 
-            if (relevantLocation.annotation) {
+            if ([location isEqual:relevantLocation]) {
                 continue;
             }
 
@@ -194,9 +195,9 @@ static NSString * const DebuggingIdentifier3 = @"3";
                 if (self.debugging) {
                     MKMapPoint points[5];
                     points[0] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
-                    points[1] = MKMapPointMake(locationRect.origin.x + widthInterval, locationRect.origin.y);
-                    points[2] = MKMapPointMake(locationRect.origin.x + widthInterval, locationRect.origin.y + heightInterval);
-                    points[3] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y + heightInterval);
+                    points[1] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y);
+                    points[2] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y + locationRect.size.height);
+                    points[3] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y + locationRect.size.height);
                     points[4] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
 
                     MKPolygon *polygon = [MKPolygon polygonWithPoints:points count:5];
@@ -225,7 +226,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
                     points[2] = MKMapPointMake(locationRect.origin.x + locationRect.size.width, locationRect.origin.y + locationRect.size.height);
                     points[3] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y + locationRect.size.height);
                     points[4] = MKMapPointMake(locationRect.origin.x, locationRect.origin.y);
-                    
+
                     polygon = [MKPolygon polygonWithPoints:points count:5];
                     polygon.title = DebuggingIdentifier3;
                     
@@ -267,6 +268,8 @@ static NSString * const DebuggingIdentifier3 = @"3";
         }
 
         //break;
+    }
+
     }
 
     int totalAnnotations = 0;
