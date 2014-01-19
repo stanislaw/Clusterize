@@ -46,8 +46,9 @@ static NSString * const DebuggingIdentifier3 = @"3";
         SingleAnnotation *annotation = [[SingleAnnotation alloc] init];
         annotation.coordinate = location.coordinate;
 
-        //[self.mapView addAnnotation:annotation];
+        [self.mapView addAnnotation:annotation];
     }
+
     //[self clusterAnnotations];
 }
 
@@ -176,7 +177,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
         MKMapRect locationRect = mapRectForLocation(location);
 
-        MKMapRect locationAroundRect = MKMapRectInset(locationRect, - (locationRect.size.width), - (locationRect.size.height));
+        MKMapRect locationAroundRect = MKMapRectInset(locationRect, - (locationRect.size.width / 2), - (locationRect.size.height / 2));
 
         NSArray *relevantLocations = [self.kdTree annotationsInMapRect:locationAroundRect];
 
@@ -235,10 +236,18 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
                 if (location.annotation == nil && relevantLocation.annotation == nil) {
                     ClusterAnnotation *clusterAnnotation = [[ClusterAnnotation alloc] init];
-                    clusterAnnotation.locations = [NSMutableSet set];
 
-                    [clusterAnnotation.locations addObject:location];
-                    [clusterAnnotation.locations addObject:relevantLocation];
+                    MKMapPoint sumOfMapPoints = clusterAnnotation.sumOfMapPoints;
+
+                    sumOfMapPoints.x += location.mapPoint.x;
+                    sumOfMapPoints.y += location.mapPoint.y;
+
+                    sumOfMapPoints.x += relevantLocation.mapPoint.x;
+                    sumOfMapPoints.y += relevantLocation.mapPoint.y;
+
+                    clusterAnnotation.sumOfMapPoints = sumOfMapPoints;
+
+                    clusterAnnotation.numberOfAnnotations += 2;
 
                     [locationsToAddAsSingleAnnotations removeObject:location];
                     [locationsToAddAsSingleAnnotations removeObject:relevantLocation];
@@ -257,7 +266,14 @@ static NSString * const DebuggingIdentifier3 = @"3";
                     MKMapRect centroidRect = mapRectForLocation(centroidLocation);
 
                     if (MKMapRectIntersectsRect(centroidRect, relevantLocationRect)) {
-                        [clusterAnnotation.locations addObject:relevantLocation];
+                        MKMapPoint sumOfMapPoints = clusterAnnotation.sumOfMapPoints;
+
+                        sumOfMapPoints.x += relevantLocation.mapPoint.x;
+                        sumOfMapPoints.y += relevantLocation.mapPoint.y;
+
+                        clusterAnnotation.sumOfMapPoints = sumOfMapPoints;
+
+                        clusterAnnotation.numberOfAnnotations += 1;
 
                         relevantLocation.annotation = clusterAnnotation;
 
@@ -276,7 +292,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     for (ClusterAnnotation *clusterAnnotation in clusterAnnotations) {
         [clusterAnnotation calculateCoordinate];
-        totalAnnotations += clusterAnnotation.locations.count;
+        totalAnnotations += clusterAnnotation.numberOfAnnotations;
     }
 
     for (SmartLocation *location in locationsToAddAsSingleAnnotations) {

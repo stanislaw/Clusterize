@@ -17,6 +17,7 @@
 
 @property (copy, nonatomic) NSString *title;
 
-@property (nonatomic) NSMutableSet *locations;
+@property (nonatomic) MKMapPoint sumOfMapPoints;
+@property (nonatomic) NSUInteger numberOfAnnotations;
 
 @end

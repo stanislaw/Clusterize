@@ -15,32 +15,18 @@
 
 - (instancetype)init {
     self = [super init];
+    self.sumOfMapPoints = MKMapPointMake(0, 0);
+    self.numberOfAnnotations = 0;
 
     return self;
 }
 
 - (void)calculateCoordinate {
-    CLLocationCoordinate2D centroidPoint = CLLocationCoordinate2DMake(0, 0);
+    MKMapPoint centroidMapPoint = MKMapPointMake(self.sumOfMapPoints.x / self.numberOfAnnotations, self.sumOfMapPoints.y / self.numberOfAnnotations);
 
-    for (SmartLocation *location in self.locations) {
-        centroidPoint.latitude += location.coordinate.latitude;
-        centroidPoint.longitude += location.coordinate.longitude;
-    }
+    CLLocationCoordinate2D centroidPoint = MKCoordinateForMapPoint(centroidMapPoint);
 
-    centroidPoint.latitude = centroidPoint.latitude / self.locations.count;
-    centroidPoint.longitude = centroidPoint.longitude / self.locations.count;
-
-
-    /*
-    if (CLLocationCoordinate2DIsValid(centroidPoint) == NO) {
-        NSLog(@"Wrong centroid coordinate %f %f", centroidPoint.latitude, centroidPoint.longitude);
-
-        abort();
-    }
-     */
-
-
-    self.title = [NSString stringWithFormat:@"Annotations: %u", self.locations.count];
+    self.title = [NSString stringWithFormat:@"Annotations: %u", self.numberOfAnnotations];
     
     _coordinate = centroidPoint;
 }
