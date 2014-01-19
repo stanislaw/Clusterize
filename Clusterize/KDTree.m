@@ -73,6 +73,7 @@
 
     [centroids enumerateObjectsUsingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
         [centroid calculateLocationBasedOnAccumulatedData];
+        NSLog(@"lalala %f", centroid.delta);
     }];
 
     return result;
@@ -121,7 +122,9 @@
     }
 
     if (indexes.count == 0) {
-        abort();
+        return;
+        //abort();
+
     }
 
     else if (indexes.count == 1) {

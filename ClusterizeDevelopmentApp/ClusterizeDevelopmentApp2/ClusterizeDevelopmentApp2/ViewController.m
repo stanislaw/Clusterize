@@ -32,7 +32,7 @@ static NSString * const DebuggingIdentifier3 = @"3";
 
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 4000; i++) {
         SmartLocation *randomCoordinate = [self randomLocation22];
 
         [self.annotations addObject:randomCoordinate];
@@ -160,17 +160,17 @@ static NSString * const DebuggingIdentifier3 = @"3";
             heightInterval
         );
 
-        //mapRect = MKMapRectInset(mapRect, - (widthInterval / 4), - (heightInterval / 4));
+        mapRect = MKMapRectInset(mapRect, - (widthInterval / 2), - (heightInterval / 2));
 
         return mapRect;
     };
 
     for (SmartLocation *location in locations) {
-        /*
+
         if (location.annotation) {
             continue;
         }
-         */
+
 
         MKMapRect locationRect = mapRectForLocation(location);
 

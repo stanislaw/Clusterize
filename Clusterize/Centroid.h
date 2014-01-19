@@ -20,5 +20,6 @@
 
 @property (nonatomic) NSUInteger numberOfAnnotations;
 @property (nonatomic) MKMapPoint sumOfMapPoints;
+@property (nonatomic) CLLocationDegrees delta;
 
 @end
