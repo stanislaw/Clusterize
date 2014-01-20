@@ -13,6 +13,7 @@
 
 @property (readonly, nonatomic) CLLocation *location;
 @property (nonatomic) MKMapPoint mapPoint;
+@property (nonatomic) MKMapPoint squaredMapPoint;
 
 
 - (void)calculateLocationBasedOnAccumulatedData;

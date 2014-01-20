@@ -15,6 +15,9 @@
 
     if (self == nil) return nil;
 
+    self.mapPoint = MKMapPointMake(0, 0);
+    self.squaredMapPoint = MKMapPointMake(0, 0);
+
     [self invalidateAccumulatedData];
 
     return self;
@@ -23,6 +26,8 @@
 - (void)calculateLocationBasedOnAccumulatedData {
     if (self.numberOfAnnotations > 0) {
         self.mapPoint = MKMapPointMake(self.sumOfMapPoints.x / self.numberOfAnnotations, self.sumOfMapPoints.y / self.numberOfAnnotations);
+        self.squaredMapPoint = MKMapPointMake(pow(self.mapPoint.x, 2), pow(self.mapPoint.y, 2));
+
         CLLocationCoordinate2D coordinate = MKCoordinateForMapPoint(self.mapPoint);
 
         CLLocation *oldLocation = self.location;

@@ -26,7 +26,7 @@
     
     [self.view addSubview:mapView];
 
-    for (int i = 0; i < 7000; i++) {
+    for (int i = 0; i < 3000; i++) {
         CLLocation *randomCoordinate = [self randomLocation];
 
         [self.annotations addObject:randomCoordinate];
@@ -74,7 +74,9 @@
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-    [self clusterAnnotationsUsingCenter:nil iteration:0];
+    Benchmark(1, ^{
+        [self clusterAnnotationsUsingCenter:nil iteration:0];
+    });
 }
 
 - (void)clusterAnnotationsUsingCenter:(NSMutableArray *)centroids iteration:(NSInteger)iteration {
@@ -93,6 +95,7 @@
             for(int y = mapRect.origin.y; y < mapRect.origin.y + mapRect.size.height; y += heightInterval) {
                 Centroid *centroid = [[Centroid alloc] init];
                 centroid.mapPoint = MKMapPointMake(x, y);
+                centroid.squaredMapPoint = MKMapPointMake(pow(x, 2), pow(y, 2));
                 centroid.numberOfAnnotations = 0;
 
                 [centroids addObject:centroid];

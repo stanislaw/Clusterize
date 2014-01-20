@@ -99,7 +99,23 @@
         __block NSUInteger bestCenterIndex = NSNotFound;
 
         [centroids enumerateObjectsAtIndexes:indexes options:0 usingBlock:^(Centroid *centroid, NSUInteger idx, BOOL *stop) {
-            CLLocationDistance squaredDistanceBeetweenCenterAndPoint = pow(centroid.mapPoint.x - curNode.medianMapPoint.x, 2) + pow(centroid.mapPoint.y - curNode.medianMapPoint.y, 2);
+            double centroidX = centroid.mapPoint.x;
+            double centroidY = centroid.mapPoint.y;
+
+            double squaredCentroidX = centroid.squaredMapPoint.x;
+            double squaredCentroidY = centroid.squaredMapPoint.y;
+
+            double curNodeX = curNode.medianMapPoint.x;
+            double curNodeY = curNode.medianMapPoint.y;
+
+            double squaredCurNodeX = curNode.squaredMedianMapPoint.x;
+            double squaredCurNodeY = curNode.squaredMedianMapPoint.y;
+
+            //CLLocationDistance squaredDistanceBeetweenCenterAndPoint = pow(centroidX - curNodeX, 2) + pow(centroidY - curNodeY, 2);
+
+            CLLocationDistance squaredDistanceBeetweenCenterAndPoint =
+                squaredCentroidX + squaredCurNodeX + squaredCentroidY + squaredCurNodeY -
+                2 * (centroidX * curNodeX + centroidY * curNodeY);
 
             if (squaredDistanceBeetweenCenterAndPoint < minimalSquaredDistance) {
                 minimalSquaredDistance = squaredDistanceBeetweenCenterAndPoint;
@@ -129,14 +145,14 @@
     else if (indexes.count == 1) {
         Centroid *theOnlyCentroid = [centroids objectAtIndex:indexes.firstIndex];
 
-        theOnlyCentroid.sumOfMapPoints = MKMapPointMake(theOnlyCentroid.sumOfMapPoints.x + curNode.medianMapPoint.x, theOnlyCentroid.sumOfMapPoints.y + curNode.medianMapPoint.y);
+        theOnlyCentroid.sumOfMapPoints = MKMapPointMake(theOnlyCentroid.sumOfMapPoints.x + curNode.sumOfMapPoints.x, theOnlyCentroid.sumOfMapPoints.y + curNode.sumOfMapPoints.y);
 
-        theOnlyCentroid.numberOfAnnotations++;
+        theOnlyCentroid.numberOfAnnotations += curNode.numberOfAnnotations;
 
         return;
     }
 
-    __block CLLocationDistance minimalDistanceBeetweenNodeAndCentroid = DBL_MAX;
+    __block CLLocationDistance minimalSquaredDistanceBeetweenNodeAndCentroid = DBL_MAX;
     __block NSUInteger candidateCentroidIndex = NSNotFound;
 
 
@@ -144,19 +160,19 @@
         CLLocationDistance distanceBeetweenNodeAndCentroid = MKMapRectSquaredDistanceToMapPoint(curNode.mapRect, centroid.mapPoint);
 
         if (distanceBeetweenNodeAndCentroid == 0) {
-            if (minimalDistanceBeetweenNodeAndCentroid == 0) {
+            if (minimalSquaredDistanceBeetweenNodeAndCentroid == 0) {
                 *stop = YES;
                 candidateCentroidIndex = NSNotFound;
 
                 return;
             } else {
-                minimalDistanceBeetweenNodeAndCentroid = 0;
+                minimalSquaredDistanceBeetweenNodeAndCentroid = 0;
             }
         }
 
         // TODO check one center exist!
-        else if (minimalDistanceBeetweenNodeAndCentroid > distanceBeetweenNodeAndCentroid) {
-            minimalDistanceBeetweenNodeAndCentroid = distanceBeetweenNodeAndCentroid;
+        else if (minimalSquaredDistanceBeetweenNodeAndCentroid > distanceBeetweenNodeAndCentroid) {
+            minimalSquaredDistanceBeetweenNodeAndCentroid = distanceBeetweenNodeAndCentroid;
             candidateCentroidIndex = centroidIndex;
         }
     }];
@@ -277,6 +293,8 @@
     if (count == 1) {
         treeNode.annotation = [annotations firstObject];
         treeNode.medianMapPoint = MKMapPointForCoordinate(treeNode.annotation.coordinate);
+        treeNode.squaredMedianMapPoint = MKMapPointMake(pow(treeNode.medianMapPoint.x, 2), pow(treeNode.medianMapPoint.y, 2));
+
         treeNode.mapRect = [self mapRectThatFitsAnnotations:@[ treeNode.annotation ]];
 
         return treeNode;
@@ -301,7 +319,9 @@
     // Median map point
     NSInteger medianIdx = [sortedAnnotations count] / 2;
     CLLocation *medianAnnotation = [sortedAnnotations objectAtIndex:medianIdx];
-    treeNode.medianMapPoint = MKMapPointForCoordinate(medianAnnotation.coordinate);
+
+    // medianMapPoint for not-end leaves are not used now
+    //treeNode.medianMapPoint = MKMapPointForCoordinate(medianAnnotation.coordinate);
 
     NSArray *leftAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(0, medianIdx)];
     NSArray *rightAnnotations = [sortedAnnotations subarrayWithRange:NSMakeRange(medianIdx, count - medianIdx)];
